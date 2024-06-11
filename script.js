@@ -64,10 +64,11 @@ async function bruhToPng(filePath) {
 
 async function main() {
   const args = process.argv.slice(2);
-  if (args.length < 2) {
-    console.error('Usage: node script.js <compile|preview> <path>');
+  if (args.length < 3) {
+    console.error('Secondary argument ("path") not provided. Example: `node script.js compile path/to/image.png`');
     process.exit(1);
   }
+  
 
   const command = args[0];
   const filePath = args[1];
