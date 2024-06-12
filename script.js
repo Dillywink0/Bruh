@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const sharp = require('sharp');
 const Color = require('color');
+const { Command } = require('commander');
 
 const TEMP_RESULT_PATH = 'temp.png';
 
@@ -63,29 +64,43 @@ async function bruhToPng(filePath) {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.length < 3) {
-    console.error('Secondary argument ("path") not provided. Example: `node script.js compile path/to/image.png`');
-    process.exit(1);
-  }
-  
+  const program = new Command();
+  program
+    .name('bruh-converter')
+    .description('Convert PNG to BRUH format and vice versa')
+    .version('1.0.0');
 
-  const command = args[0];
-  const filePath = args[1];
+  program
+    .command('compile <path>')
+    .description('Convert PNG to BRUH format')
+    .action(async (path) => {
+      if (!await fileExists(path)) {
+        console.error(`File not found: ${path}`);
+        process.exit(1);
+      }
+      await pngToBruh(path);
+    });
 
-  if (command === 'compile') {
-    if (args.length < 3) {
-      console.error('Secondary argument ("path") not provided. Example: `node script.js compile path/to/image.png`');
-      process.exit(1);
-    }
-    await pngToBruh(filePath);
-  } else if (command === 'preview') {
-    await bruhToPng(filePath);
-    // Here you would implement your preview logic, e.g., opening the image in a viewer
-    console.log('Preview is not implemented in this example');
-  } else {
-    console.error('Unknown command. Use "compile" to convert PNG to BRUH, "preview" to convert BRUH to PNG.');
-    process.exit(1);
+  program
+    .command('preview <path>')
+    .description('Convert BRUH to PNG format')
+    .action(async (path) => {
+      if (!await fileExists(path)) {
+        console.error(`File not found: ${path}`);
+        process.exit(1);
+      }
+      await bruhToPng(path);
+    });
+
+  program.parse(process.argv);
+}
+
+async function fileExists(path) {
+  try {
+    await fs.access(path);
+    return true;
+  } catch {
+    return false;
   }
 }
 
