@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "color": "^4.2.3",
+    "commander": "^12.1.0",
     "sharp": "^0.33.4"
   }
 }
